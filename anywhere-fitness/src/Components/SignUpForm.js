@@ -20,38 +20,34 @@ const formInputsStyles = {
 const SignUpForm = (props) => {
   //state for signup form
   const [newUserForm, setNewUserForm] = useState({
-    newUsername: '',
-    newUserPassword: '',
-    newUserPasswordReEnter: '',
-    newUserFirstName: '',
-    newUserLastName: '',
-    newUserAddress: '',
-    newUserAddressLine2: '',
-    newUserCity: '',
-    newUserState: '',
-    newUserZip: '',
-    newUserPhone: '',
-    newUserAccountType: '',
+    email: '',
+    password: '',
+    first_name: '',
+    last_name: '',
+    phone_number: '',
+    role_id: '',
   });
 
   // sets state of user after form submitted
   const [user, setUser] = useState({
-    username: '',
+    email: '',
     password: '',
-    firstName: '',
-    lastName: '',
-    address: '',
-    addressLine2: '',
-    city: '',
-    state: '',
-    zip: '',
+    first_name: '',
+    last_name: '',
     phone: '',
-    accountType: '',
+    role_id: '',
   });
 
   //change handler for form
   const handleChange = (event) => {
-    setNewUserForm({ ...newUserForm, [event.target.name]: event.target.value });
+    if (event.target.name === 'role_id') {
+      event.target.value = parseInt(event.target.value);
+    } else {
+      setNewUserForm({
+        ...newUserForm,
+        [event.target.name]: event.target.value,
+      });
+    }
   };
 
   // event handler for submitting form
@@ -69,15 +65,19 @@ const SignUpForm = (props) => {
       </div>
       <Form name='signUpForm'>
         <Row>
-          <Col>
+          <Col lg={7}>
             <FormGroup style={formInputsStyles}>
-              <Label for='newUsername'>Username</Label>
-              <Input name='newUsername' onChange={handleChange} />
-              <FormText>Please enter your username.</FormText>
-              <FormFeedback valid>Username is available!</FormFeedback>
+              <Label htmlFor='email'>Email</Label>
+              <Input
+                name='email'
+                onChange={handleChange}
+                value={newUserForm.email}
+              />
+              <FormText>Please enter your email.</FormText>
+              <FormFeedback valid>Email is available!</FormFeedback>
               <FormFeedback invalid>
-                Sorry, that username is already taken. Please choose another
-                username.
+                Sorry, that email is already registered. Please sign in or enter
+                a different email.
               </FormFeedback>
             </FormGroup>
           </Col>
@@ -85,8 +85,12 @@ const SignUpForm = (props) => {
         <Row>
           <Col lg={5}>
             <FormGroup style={formInputsStyles}>
-              <Label for='newUserPassword'>Password</Label>
-              <Input name='newUserPassword' />
+              <Label htmlFor='password'>Password</Label>
+              <Input
+                name='password'
+                onChange={handleChange}
+                value={newUserForm.password}
+              />
               <FormText>Please enter your password.</FormText>
               <FormFeedback valid>Valid password!</FormFeedback>
               <FormFeedback invalid>
@@ -94,21 +98,33 @@ const SignUpForm = (props) => {
               </FormFeedback>
             </FormGroup>
           </Col>
-          <Col lg={5}>
+          <Col>
             <FormGroup style={formInputsStyles}>
-              <Label for='newUserPasswordReEnter'>Re-Enter Password</Label>
-              <Input name='newUserPasswordReEnter' />
-              <FormText>Please re-enter your password.</FormText>
-              <FormFeedback valid>Passwords match!</FormFeedback>
-              <FormFeedback invalid>Passwords do not match</FormFeedback>
+              <Label lg={2} htmlFor='role_id'>
+                Account Type:
+              </Label>
+              <Col lg={2}>
+                <Input
+                  type='select'
+                  name='role_id'
+                  onChange={handleChange}
+                  value={newUserForm.role_id}>
+                  <option value='1'>Instructor</option>
+                  <option value='2'>Student</option>
+                </Input>
+              </Col>
             </FormGroup>
           </Col>
         </Row>
         <Row>
           <Col lg={5}>
             <FormGroup style={formInputsStyles}>
-              <Label for='newUserFirstName'>First Name</Label>
-              <Input name='newUserFirstName' />
+              <Label htmlFor='first_name'>First Name</Label>
+              <Input
+                name='first_name'
+                onChange={handleChange}
+                value={newUserForm.first_name}
+              />
               <FormText>Please enter First Name.</FormText>
               <FormFeedback>
                 First name is required and must be at least 2 characters long.
@@ -117,8 +133,12 @@ const SignUpForm = (props) => {
           </Col>
           <Col lg={5}>
             <FormGroup style={formInputsStyles}>
-              <Label for='newUserLastName'>Last Name</Label>
-              <Input name='newUserLastName' />
+              <Label htmlFor='last_name'>Last Name</Label>
+              <Input
+                name='last_name'
+                onChange={handleChange}
+                value={newUserForm.last_name}
+              />
               <FormText>Please enter Last Name.</FormText>
               <FormFeedback invalid>
                 Last name is required and must be at least 2 characters long.
@@ -127,119 +147,18 @@ const SignUpForm = (props) => {
           </Col>
         </Row>
         <Row>
-          <Col lg={7}>
+          <Col lg={5}>
             <FormGroup style={formInputsStyles}>
-              <Label for='newUserAddress'>Address</Label>
-              <Input name='newUserAddress' />
-              <FormText>Please enter address.</FormText>
-              <FormFeedback invalid>Address is required.</FormFeedback>
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={7}>
-            <FormGroup style={formInputsStyles}>
-              <Label for='newUserAddressLine2'>Address Line 2</Label>
-              <Input name='newUserAddressLine2' />
-              <FormText>Please enter apartment, suite info.</FormText>
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={3}>
-            <FormGroup style={formInputsStyles}>
-              <Label for='newUserCity'>City</Label>
-              <Input name='newUserCity' />
-              <FormText>Please enter city.</FormText>
-              <FormFeedback invalid>City is required</FormFeedback>
-            </FormGroup>
-          </Col>
-          <Col lg={2}>
-            <FormGroup style={formInputsStyles}>
-              <Label for='newUserState'>Select state:</Label>
-              <Input type='select' name='newUserState' id='newUserState'>
-                <option>AL</option>
-                <option>AK</option>
-                <option>AZ</option>
-                <option>AR</option>
-                <option>CA</option>
-                <option>CO</option>
-                <option>CT</option>
-                <option>DE</option>
-                <option>FL</option>
-                <option>GA</option>
-                <option>HI</option>
-                <option>ID</option>
-                <option>IL</option>
-                <option>IN</option>
-                <option>IA</option>
-                <option>KS</option>
-                <option>KY</option>
-                <option>LA</option>
-                <option>ME</option>
-                <option>MD</option>
-                <option>MA</option>
-                <option>MI</option>
-                <option>MN</option>
-                <option>MS</option>
-                <option>MO</option>
-                <option>MT</option>
-                <option>NE</option>
-                <option>NV</option>
-                <option>NH</option>
-                <option>NJ</option>
-                <option>NM</option>
-                <option>NY</option>
-                <option>NC</option>
-                <option>ND</option>
-                <option>OH</option>
-                <option>OK</option>
-                <option>OR</option>
-                <option>PA</option>
-                <option>RI</option>
-                <option>SC</option>
-                <option>SD</option>
-                <option>TN</option>
-                <option>TX</option>
-                <option>UT</option>
-                <option>VT</option>
-                <option>VA</option>
-                <option>WA</option>
-                <option>WV</option>
-                <option>WI</option>
-                <option>WY</option>
-              </Input>
-              <FormText>Please choose state.</FormText>
-            </FormGroup>
-          </Col>
-          <Col lg={3}>
-            <FormGroup style={formInputsStyles}>
-              <Label for='newUserZip'>Zip Code</Label>
-              <Input name='newUserZip' />
-              <FormText Text>Please enter zip code.</FormText>
-              <FormFeedback invalid>Zip code is required.</FormFeedback>
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Label lg={2} for='newUserAccountType'>
-              Account Type:
-            </Label>
-            <Label lg={3} radio>
+              <Label htmlFor='phone_number'>Phone Number</Label>
               <Input
-                name='newUserAccountType'
-                type='radio'
-                value='instructor'
+                name='phone_number'
+                onChange={handleChange}
+                value={newUserForm.phone_number}
               />
-              Instructor
-            </Label>
-            <Label lg={3} radio>
-              <Input name='newUserAccountType' type='radio' value='student' />
-              Student
-            </Label>
+            </FormGroup>
           </Col>
         </Row>
+
         <FormGroup className='col-sm-12 col-md-6 offset-md-3'>
           <Button
             style={formInputsStyles}
