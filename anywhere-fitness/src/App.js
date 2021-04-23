@@ -3,12 +3,10 @@ import RegistrationForm from './Components/RegistrationForm';
 import SignInForm from './Components/SignInForm';
 
 const App = () => {
-  return (
-    <>
-      <RegistrationForm />
-      <SignInForm />
-    </>
-  );
+  return <div>
+    <RegistrationForm />
+    <SignInForm />
+  </div>
 };
 
 export default App;
