@@ -18,7 +18,7 @@ const formInputStyles = {
 
 const SignInForm = (props) => {
     const [userSignIn, setUserSignIn] = useState ({
-        signInUsername: '',
+        signInEmail: '',
         signInUserPassword: '',
     })
 
@@ -34,11 +34,11 @@ return (
     <Form name='signInForm'>
         <Col className='col-sm-12 col-md-6 offset-md-3'>
             <FormGroup style={formInputStyles}>
-                <FormText>Please enter your username </FormText>
-                <Input name='signInUsername' onChange={handleChange}>
-                    <FormFeedback valid>Username is available! </FormFeedback>
+                <FormText>Please enter your email </FormText>
+                <Input name='signInEmail' onChange={handleChange}>
+                    <FormFeedback valid>Email is available! </FormFeedback>
                     <FormFeedback invalid>
-                        Sorry, this username does not exist. Please use a valid username.
+                        Sorry, this email does not exist. Please use a valid username.
                     </FormFeedback>
                 </Input>
             </FormGroup>
