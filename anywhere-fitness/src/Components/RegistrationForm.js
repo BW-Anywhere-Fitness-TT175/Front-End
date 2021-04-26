@@ -16,7 +16,7 @@ const formInputsStyles = {
   margin: '5px',
 };
 
-const SignUpForm = (props) => {
+const RegistrationForm = (props) => {
   //state for signup form
   const [newUserForm, setNewUserForm] = useState({
     email: '',
@@ -172,4 +172,4 @@ const SignUpForm = (props) => {
   );
 };
 
-export default SignUpForm;
+export default RegistrationForm;

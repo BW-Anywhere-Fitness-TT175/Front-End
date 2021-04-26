@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Form,
@@ -7,10 +7,13 @@ import {
   Label,
   Row,
   Input,
-  FormText,
   FormFeedback,
   Button,
 } from 'reactstrap';
+import BASE_URL from './BASE_URL.js';
+import * as Yup from 'yup';
+import { Formik } from 'formik';
+import * as EmailValidator from 'email-validator';
 
 const formInputStyles = {
   padding: '5px',
@@ -34,14 +37,47 @@ const SignInForm = (props) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    console.log('Log In form submitted');
     axios
-      .post('#', userSignIn)
+      .post(BASE_URL, userSignIn) // WAITING ON ENDPOINT
       .then((res) => {
         setUser(res.data);
       })
       .catch((err) => console.log(err));
   };
 
+  const formSchema = Yup.object().shape({
+    email: Yup.string()
+      .email('Please enter valid email address.')
+      .required('Email address required.'),
+    password: Yup.string()
+      .required('Password is required')
+      .min(6, 'Password must be at least 6 characters long.'),
+  });
+
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+  });
+
+  /*  Yup.reach(formSchema, name)
+    .validate(value)
+    .then((valid) => {
+      setErrors({
+        ...errors,
+        [name]: '',
+      });
+    })
+    .catch((err) => {
+      setErrors({
+        ...errors,
+        [name]: err.errors[0],
+      });
+    });
+  setUserSignIn({
+    ...userSignIn,
+    [name]: value,
+  }); */
   return (
     <>
       <div className='col-sm-12 col-md-6 offset-md-3'>
@@ -72,7 +108,7 @@ const SignInForm = (props) => {
               <Input
                 name='password'
                 onChange={handleChange}
-                value={userSignIn.password.x}
+                value={userSignIn.password}
               />
               <FormFeedback valid>Valid password!</FormFeedback>
               <FormFeedback invalid>
