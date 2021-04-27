@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import RegistrationForm from './RegistrationForm';
 import SignInForm from './SignInForm';
 import Navbar from './Navbar.js';
+
 const Home = () => {
   return (
     <div className='home'>
@@ -12,4 +13,5 @@ const Home = () => {
     </div>
   );
 };
+
 export default Home;
