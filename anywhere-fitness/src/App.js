@@ -1,11 +1,11 @@
 import React from 'react';
-import SignUpForm from './Components/SignUpForm';
+import './Components/SignInForm';
+import SignInForm from './Components/SignInForm';
 
 const App = () => {
-  return (
-    <>
-      <SignUpForm />
-    </>
-  );
+  return <div>
+    <SignInForm />
+  </div>;
+
 };
 export default App;
