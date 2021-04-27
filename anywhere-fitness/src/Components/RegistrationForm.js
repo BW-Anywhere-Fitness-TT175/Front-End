@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Form, FormGroup, Label, Col, Row, Input, Button } from 'reactstrap';
-import BASE_URL from './BASE_URL.js';
+//import BASE_URL from './BASE_URL.js';
 import * as Yup from 'yup';
+import Navbar from './Navbar.js';
 
 const formInputsStyles = {
   padding: '5px',
@@ -61,24 +62,27 @@ const RegistrationForm = (props) => {
     setNewUserForm(newFormData);
   };
 
+  const clearForm = () => {
+    setNewUserForm({
+      email: '',
+      password: '',
+      first_name: '',
+      last_name: '',
+      phone: '',
+      role_id: '',
+    });
+  };
   // event handler for submitting form
   const submitNewUserForm = (event) => {
     event.preventDefault();
     console.log('registration form submitted');
     axios
-      .post(BASE_URL, newUserForm)
+      .post('http://reqres.com/user', newUserForm) //WAITING ON ENDPOINT
       .then((res) => {
         setPost(res.data);
         console.log('success', post);
         setUser(res.data);
-        setNewUserForm({
-          email: '',
-          password: '',
-          first_name: '',
-          last_name: '',
-          phone: '',
-          role_id: '',
-        });
+        setNewUserForm({});
       })
       .catch((err) => console.log(err.response));
   };
@@ -138,10 +142,14 @@ const RegistrationForm = (props) => {
 
   return (
     <>
+      <Navbar />
       <div className='col-sm-8 col-md-4 offset-lg-2'>
         <h1>New Account Registration</h1>
       </div>
       <Form name='signUpForm'>
+        <button type='clear' onClick={clearForm}>
+          Clear Form
+        </button>
         <Row>
           <Col lg={7}>
             <FormGroup style={formInputsStyles}>

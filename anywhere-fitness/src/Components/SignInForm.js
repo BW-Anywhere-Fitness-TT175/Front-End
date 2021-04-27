@@ -11,22 +11,26 @@ const formInputStyles = {
 };
 
 const SignInForm = (props) => {
+  // Sets log in form state
   const [userSignIn, setUserSignIn] = useState({
     email: '',
     password: '',
   });
 
+  // user state to use after post call made
   const [user, setUser] = useState({
     email: '',
     password: '',
   });
 
+  // event handler for form input
   const handleChange = (event) => {
     event.persist();
     validateChange(event);
     setUserSignIn({ ...userSignIn, [event.target.name]: event.target.value });
   };
 
+  // event handler for form submission
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log('Log In form submitted');
@@ -38,6 +42,7 @@ const SignInForm = (props) => {
       .catch((err) => console.log(err));
   };
 
+  // schema for form validation
   const formSchema = Yup.object().shape({
     email: Yup.string()
       .email('Please enter valid email address.')
@@ -47,13 +52,16 @@ const SignInForm = (props) => {
       .min(6, 'Password must be at least 6 characters long.'),
   });
 
+  // state to hold errors produced by post call
   const [errors, setErrors] = useState({
     email: '',
     password: '',
   });
 
+  // disables submit button until form passes validation
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
+  // whenever a change in form state is made, this runs to check validity
   useEffect(() => {
     console.log('form state change');
     formSchema.isValid(userSignIn).then((valid) => {
@@ -62,6 +70,7 @@ const SignInForm = (props) => {
     });
   }, [userSignIn, formSchema]);
 
+  //validates form
   const validateChange = (e) => {
     Yup.reach(formSchema, e.target.name)
       .validate()
