@@ -1,16 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {
-  Form,
-  FormGroup,
-  Label,
-  Col,
-  Row,
-  Input,
-  FormFeedback,
-  Button,
-} from 'reactstrap';
+import { Form, FormGroup, Label, Col, Row, Input, Button } from 'reactstrap';
 import BASE_URL from './BASE_URL.js';
+import * as Yup from 'yup';
+
 const formInputsStyles = {
   padding: '5px',
   margin: '5px',
@@ -27,6 +20,9 @@ const RegistrationForm = (props) => {
     role_id: '',
   });
 
+  //set state for axios post call
+  const [post, setPost] = useState([]);
+
   // sets state of user after form submitted
   const [user, setUser] = useState({
     email: '',
@@ -37,27 +33,107 @@ const RegistrationForm = (props) => {
     role_id: '',
   });
 
-  //change handler for form
+  //sets state to control if form may be submitted. Only enables if form passes validation.
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+
+  // state for errors returned from form validation
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+    first_name: '',
+    last_name: '',
+    phone_number: '',
+    role_id: '',
+  });
+
+  //change handler for form changes
   const handleChange = (event) => {
-    if (event.target.name === 'role_id') {
-      event.target.value = parseInt(event.target.value);
-    } else {
-      setNewUserForm({
-        ...newUserForm,
-        [event.target.name]: event.target.value,
-      });
-    }
+    const newFormData = {
+      ...newUserForm,
+      [event.target.name]:
+        event.target.type === 'select'
+          ? event.target.selected
+          : event.target.value,
+    };
+
+    validateChange(event);
+    console.log('ERRORS: ', errors);
+    setNewUserForm(newFormData);
   };
 
   // event handler for submitting form
   const submitNewUserForm = (event) => {
     event.preventDefault();
+    console.log('registration form submitted');
     axios
       .post(BASE_URL, newUserForm)
       .then((res) => {
+        setPost(res.data);
+        console.log('success', post);
         setUser(res.data);
+        setNewUserForm({
+          email: '',
+          password: '',
+          first_name: '',
+          last_name: '',
+          phone: '',
+          role_id: '',
+        });
       })
-      .catch((err) => console.log);
+      .catch((err) => console.log(err.response));
+  };
+
+  // formSchema outlining shape of form
+  const formSchema = Yup.object().shape({
+    email: Yup.string()
+      .email('Please enter valid email address.')
+      .required('Email address is required.'),
+    password: Yup.string()
+      .required('Password is required.')
+      .min(6, 'Password must be 6 or more chars long.'),
+    first_name: Yup.string()
+      .required('First name is required')
+      .min(2, 'First name must be 2 or more chars long.'),
+    last_name: Yup.string()
+      .required('Last name is required.')
+      .min(2, 'Last name must be at least 2 chars long.'),
+    phone_number: Yup.string()
+      .required('Phone number is required.')
+      .min(10, 'Phone number must be 10 chars long.')
+      .max(10, 'Phone number must be 10 chars long.'),
+    role_id: Yup.string().required('Please choose type of account.'),
+  });
+
+  // checks form validity on state change
+  useEffect(() => {
+    console.log('reg form state change');
+    formSchema.isValid(newUserForm).then(
+      (valid) => {
+        console.log('valid?', valid);
+        setButtonDisabled(!valid);
+      },
+      [formSchema, newUserForm]
+    );
+  });
+
+  // validate change from handleChange
+  const validateChange = (e) => {
+    Yup.reach(formSchema, e.target.name)
+      .validate(
+        e.target.name === 'role_id' ? e.target.selected : e.target.value
+      )
+      .then((valid) => {
+        setErrors({
+          ...errors,
+          [e.target.name]: '',
+        });
+      })
+      .catch((err) => {
+        setErrors({
+          ...errors,
+          [e.target.name]: err.errors[0],
+        });
+      });
   };
 
   return (
@@ -75,11 +151,9 @@ const RegistrationForm = (props) => {
                 onChange={handleChange}
                 value={newUserForm.email}
               />
-              <FormFeedback valid>Email is available!</FormFeedback>
-              <FormFeedback invalid>
-                Sorry, that email is already registered. Please sign in or enter
-                a different email.
-              </FormFeedback>
+              {errors.email.length > 0 ? (
+                <p className='error'>{errors.email}</p>
+              ) : null}
             </FormGroup>
           </Col>
         </Row>
@@ -92,10 +166,9 @@ const RegistrationForm = (props) => {
                 onChange={handleChange}
                 value={newUserForm.password}
               />
-              <FormFeedback valid>Valid password!</FormFeedback>
-              <FormFeedback invalid>
-                Invalid password. Must be length of 6 or more.
-              </FormFeedback>
+              {errors.password.length > 0 ? (
+                <p className='error'>{errors.password}</p>
+              ) : null}
             </FormGroup>
           </Col>
           <Col>
@@ -109,9 +182,13 @@ const RegistrationForm = (props) => {
                   name='role_id'
                   onChange={handleChange}
                   value={newUserForm.role_id}>
+                  <option default>Select</option>
                   <option value='1'>Instructor</option>
                   <option value='2'>Student</option>
                 </Input>
+                {errors.role_id.length > 0 ? (
+                  <p className='error'>{errors.role_id}</p>
+                ) : null}
               </Col>
             </FormGroup>
           </Col>
@@ -125,10 +202,9 @@ const RegistrationForm = (props) => {
                 onChange={handleChange}
                 value={newUserForm.first_name}
               />
-
-              <FormFeedback>
-                First name is required and must be at least 2 characters long.
-              </FormFeedback>
+              {errors.first_name.length > 0 ? (
+                <p className='error'>{errors.first_name}</p>
+              ) : null}
             </FormGroup>
           </Col>
           <Col lg={5}>
@@ -139,10 +215,9 @@ const RegistrationForm = (props) => {
                 onChange={handleChange}
                 value={newUserForm.last_name}
               />
-
-              <FormFeedback invalid>
-                Last name is required and must be at least 2 characters long.
-              </FormFeedback>
+              {errors.last_name.length > 0 ? (
+                <p className='error'>{errors.last_name}</p>
+              ) : null}
             </FormGroup>
           </Col>
         </Row>
@@ -155,12 +230,16 @@ const RegistrationForm = (props) => {
                 onChange={handleChange}
                 value={newUserForm.phone_number}
               />
+              {errors.phone_number.length > 0 ? (
+                <p className='error'>{errors.phone_number}</p>
+              ) : null}
             </FormGroup>
           </Col>
         </Row>
 
         <FormGroup className='col-sm-12 col-md-6 offset-md-3'>
           <Button
+            disabled={buttonDisabled}
             style={formInputsStyles}
             id='submitButton'
             onClick={submitNewUserForm}>
