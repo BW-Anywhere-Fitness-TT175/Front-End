@@ -8,15 +8,16 @@ import {
   Row,
   Input,
   FormFeedback,
+  FormText,
   Button,
 } from 'reactstrap';
-import BASE_URL from './BASE_URL.js';
+
 const formInputsStyles = {
-  padding: '5px',
-  margin: '5px',
+  padding: '10px',
+  margin: '10px',
 };
 
-const RegistrationForm = (props) => {
+const SignUpForm = (props) => {
   //state for signup form
   const [newUserForm, setNewUserForm] = useState({
     email: '',
@@ -52,17 +53,14 @@ const RegistrationForm = (props) => {
   // event handler for submitting form
   const submitNewUserForm = (event) => {
     event.preventDefault();
-    axios
-      .post(BASE_URL, newUserForm)
-      .then((res) => {
-        setUser(res.data);
-      })
-      .catch((err) => console.log);
+    axios.post('#', newUserForm).then((res) => {
+      setUser(res.data);
+    });
   };
 
   return (
     <>
-      <div className='col-sm-8 col-md-4 offset-lg-2'>
+      <div className='col-sm-12 col-md-6 offset-md-3'>
         <h1>New Account Registration</h1>
       </div>
       <Form name='signUpForm'>
@@ -75,6 +73,7 @@ const RegistrationForm = (props) => {
                 onChange={handleChange}
                 value={newUserForm.email}
               />
+              <FormText>Please enter your email.</FormText>
               <FormFeedback valid>Email is available!</FormFeedback>
               <FormFeedback invalid>
                 Sorry, that email is already registered. Please sign in or enter
@@ -92,6 +91,7 @@ const RegistrationForm = (props) => {
                 onChange={handleChange}
                 value={newUserForm.password}
               />
+              <FormText>Please enter your password.</FormText>
               <FormFeedback valid>Valid password!</FormFeedback>
               <FormFeedback invalid>
                 Invalid password. Must be length of 6 or more.
@@ -125,7 +125,7 @@ const RegistrationForm = (props) => {
                 onChange={handleChange}
                 value={newUserForm.first_name}
               />
-
+              <FormText>Please enter First Name.</FormText>
               <FormFeedback>
                 First name is required and must be at least 2 characters long.
               </FormFeedback>
@@ -139,7 +139,7 @@ const RegistrationForm = (props) => {
                 onChange={handleChange}
                 value={newUserForm.last_name}
               />
-
+              <FormText>Please enter Last Name.</FormText>
               <FormFeedback invalid>
                 Last name is required and must be at least 2 characters long.
               </FormFeedback>
@@ -172,4 +172,4 @@ const RegistrationForm = (props) => {
   );
 };
 
-export default RegistrationForm;
+export default SignUpForm;
