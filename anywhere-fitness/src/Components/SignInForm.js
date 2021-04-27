@@ -1,19 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {
-  Form,
-  FormGroup,
-  Col,
-  Label,
-  Row,
-  Input,
-  FormFeedback,
-  Button,
-} from 'reactstrap';
+import { Form, FormGroup, Col, Label, Row, Input, Button } from 'reactstrap';
 import BASE_URL from './BASE_URL.js';
 import * as Yup from 'yup';
-import { Formik } from 'formik';
-import * as EmailValidator from 'email-validator';
+import Navbar from './Navbar.js';
 
 const formInputStyles = {
   padding: '5px',
@@ -32,6 +22,8 @@ const SignInForm = (props) => {
   });
 
   const handleChange = (event) => {
+    event.persist();
+    validateChange(event);
     setUserSignIn({ ...userSignIn, [event.target.name]: event.target.value });
   };
 
@@ -60,68 +52,73 @@ const SignInForm = (props) => {
     password: '',
   });
 
-  /*  Yup.reach(formSchema, name)
-    .validate(value)
-    .then((valid) => {
-      setErrors({
-        ...errors,
-        [name]: '',
-      });
-    })
-    .catch((err) => {
-      setErrors({
-        ...errors,
-        [name]: err.errors[0],
-      });
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+
+  useEffect(() => {
+    console.log('form state change');
+    formSchema.isValid(userSignIn).then((valid) => {
+      console.log('valid?', valid);
+      setButtonDisabled(!valid);
     });
-  setUserSignIn({
-    ...userSignIn,
-    [name]: value,
-  }); */
+  }, [userSignIn, formSchema]);
+
+  const validateChange = (e) => {
+    Yup.reach(formSchema, e.target.name)
+      .validate()
+      .then((valid) => {
+        setErrors({ ...errors, [e.target.name]: '' });
+      })
+      .catch((err) => {
+        setErrors({
+          ...errors,
+          [e.target.name]: err.errors[0],
+        });
+      });
+  };
+
   return (
     <>
+      <Navbar />
       <div className='col-sm-12 col-md-6 offset-md-3'>
         <h3 className='col-sm-12 col-md-6 offset-md-3'>Sign In</h3>
 
-        <Form name='signInForm'>
+        <Form name='signInForm' onSubmit={handleSubmit}>
           <Row>
             <Col>
               <FormGroup style={formInputStyles}>
-                <Label for='email'>Email</Label>
+                <Label htmlFor='email'>Email</Label>
                 <Input
                   name='email'
                   onChange={handleChange}
                   value={userSignIn.email}
                 />
-                <FormFeedback valid>Email is available! </FormFeedback>
-                <FormFeedback invalid>
-                  Sorry, we do not recognize this email. Please sign up for a
-                  new account.
-                </FormFeedback>
+                {errors.email.length > 0 ? (
+                  <p className='error'>{errors.email}</p>
+                ) : null}{' '}
               </FormGroup>
             </Col>
           </Row>
           <Row>
             <Col>
               <FormGroup style={formInputStyles}></FormGroup>
-              <Label for='password'>Password</Label>
+              <Label htmlFor='password'>Password</Label>
               <Input
                 name='password'
                 onChange={handleChange}
                 value={userSignIn.password}
               />
-              <FormFeedback valid>Valid password!</FormFeedback>
-              <FormFeedback invalid>
-                Invalid password. Must be 6 characters or more.
-              </FormFeedback>
+              {errors.password.length > 0 ? (
+                <p className='error'>{errors.password}</p>
+              ) : null}
             </Col>
           </Row>
           <Col className='col-sm-12 col-md-8 offset-md-3'>
             <FormGroup>
               <Button
+                disabled={buttonDisabled}
                 style={formInputStyles}
                 id='loginButton'
-                onClick={handleSubmit}>
+                type='submit'>
                 Sign In
               </Button>
             </FormGroup>
