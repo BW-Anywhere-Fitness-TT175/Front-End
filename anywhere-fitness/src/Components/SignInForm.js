@@ -35,7 +35,7 @@ const SignInForm = (props) => {
     event.preventDefault();
     console.log('Log In form submitted');
     axios
-      .post(BASE_URL, userSignIn) // WAITING ON ENDPOINT
+      .post(`${BASE_URL}/api/users/login`, userSignIn) // WAITING ON ENDPOINT
       .then((res) => {
         setUser(res.data);
       })
@@ -49,7 +49,7 @@ const SignInForm = (props) => {
       .required('Email address required.'),
     password: Yup.string()
       .required('Password is required')
-      .min(6, 'Password must be at least 6 characters long.'),
+      .min(10, 'Password must be at least 10 characters long.'),
   });
 
   // state to hold errors produced by post call
