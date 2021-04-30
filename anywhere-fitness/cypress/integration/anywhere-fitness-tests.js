@@ -28,6 +28,6 @@ describe('Integration Test-form input', function () {
   it('Opens registration form and adds data', function () {
     cy.visit('localhost:3000/');
     cy.get('[data-cy=registerLink]').click();
-    cy.get('[data-cy=first_name]').
+    cy.get('[data-cy=first_name]').click();
   });
 });
