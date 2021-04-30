@@ -2,12 +2,18 @@ import React from 'react';
 
 import Navbar from './Navbar.js';
 
-const Home = () => {
+const homeStyles = {
+  backgroundImage: './src/MarketingPages/AnywhereFitness/images/fitness.jpg',
+};
+
+const Home = (props) => {
+  const { history } = props;
+
   return (
-    <div className='home'>
+    <div className='home' style={homeStyles}>
       <h1>Anywhere Fitness</h1>
 
-      <Navbar />
+      <Navbar history={history} />
     </div>
   );
 };

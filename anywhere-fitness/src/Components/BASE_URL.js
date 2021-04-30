@@ -1,3 +1,3 @@
-const BASE_URL = 'https://anywhere-fitness-tt-175.herokuapp.com/';
+const BASE_URL = 'https://anywhere-fitness-tt-175.herokuapp.com';
 
 export default BASE_URL;

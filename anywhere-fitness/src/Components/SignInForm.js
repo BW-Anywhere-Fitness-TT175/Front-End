@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Form, FormGroup, Col, Label, Row, Input, Button } from 'reactstrap';
 import BASE_URL from './BASE_URL.js';
 import * as Yup from 'yup';
 import Navbar from './Navbar.js';
 
-const formInputStyles = {
-  padding: '5px',
-  margin: '5px',
-};
-
 const SignInForm = (props) => {
+  // create history variable from props
+  const history = props.history;
+
+  // created ref variable for component
+  //used for cleaning up async tasks
+  const mountedRef = useRef(true);
   // Sets log in form state
   const [userSignIn, setUserSignIn] = useState({
     email: '',
@@ -35,11 +36,29 @@ const SignInForm = (props) => {
     event.preventDefault();
     console.log('Log In form submitted');
     axios
-      .post(`${BASE_URL}/api/users/login`, userSignIn) // WAITING ON ENDPOINT
+      .post(`${BASE_URL}/api/users/login`, userSignIn) //zz
       .then((res) => {
+        console.log('success', res.data);
         setUser(res.data);
+        openLogSuccess(user);
       })
       .catch((err) => console.log(err));
+  };
+
+  const openLogSuccess = (props) => {
+    const { user } = props;
+
+    history.push(
+      {
+        pathname: '/logSuccess',
+      },
+      {
+        some: user,
+      }
+    );
+    return () => {
+      mountedRef.current = false;
+    };
   };
 
   // schema for form validation
@@ -49,7 +68,7 @@ const SignInForm = (props) => {
       .required('Email address required.'),
     password: Yup.string()
       .required('Password is required')
-      .min(10, 'Password must be at least 10 characters long.'),
+      .max(10, 'Password must be 10 chars or less long.'),
   });
 
   // state to hold errors produced by post call
@@ -73,7 +92,7 @@ const SignInForm = (props) => {
   //validates form
   const validateChange = (e) => {
     Yup.reach(formSchema, e.target.name)
-      .validate()
+      .validate(e.target.value)
       .then((valid) => {
         setErrors({ ...errors, [e.target.name]: '' });
       })
@@ -94,7 +113,7 @@ const SignInForm = (props) => {
         <Form name='signInForm' onSubmit={handleSubmit}>
           <Row>
             <Col>
-              <FormGroup style={formInputStyles}>
+              <FormGroup>
                 <Label htmlFor='email'>Email</Label>
                 <Input
                   name='email'
@@ -109,25 +128,27 @@ const SignInForm = (props) => {
           </Row>
           <Row>
             <Col>
-              <FormGroup style={formInputStyles}></FormGroup>
-              <Label htmlFor='password'>Password</Label>
-              <Input
-                name='password'
-                onChange={handleChange}
-                value={userSignIn.password}
-              />
-              {errors.password.length > 0 ? (
-                <p className='error'>{errors.password}</p>
-              ) : null}
+              <FormGroup>
+                <Label htmlFor='password'>Password</Label>
+                <Input
+                  type='password'
+                  name='password'
+                  onChange={handleChange}
+                  value={userSignIn.password}
+                />
+                {errors.password.length > 0 ? (
+                  <p className='error'>{errors.password}</p>
+                ) : null}
+              </FormGroup>
             </Col>
           </Row>
           <Col className='col-sm-12 col-md-8 offset-md-3'>
             <FormGroup>
               <Button
                 disabled={buttonDisabled}
-                style={formInputStyles}
                 id='loginButton'
-                type='submit'>
+                type='submit'
+                onSubmit={handleSubmit}>
                 Sign In
               </Button>
             </FormGroup>
@@ -137,5 +158,4 @@ const SignInForm = (props) => {
     </>
   );
 };
-
 export default SignInForm;
