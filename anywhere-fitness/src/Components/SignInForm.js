@@ -45,6 +45,7 @@ const SignInForm = (props) => {
       .catch((err) => console.log(err));
   };
 
+  //redirects to logSuccess page
   const openLogSuccess = (props) => {
     const { user } = props;
 
