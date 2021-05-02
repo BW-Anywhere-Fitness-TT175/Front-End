@@ -1,13 +1,16 @@
 import React from 'react';
+import Navbar from './Navbar';
+import '../components.css';
 
-const RegistrationSuccess = (props) => {
-  const { role_id, first_name } = props;
+const RegistrationSuccess = () => {
   return (
-    <div className='success'>
-      <h1>
-        {first_name}, {role_id}, successfully registered!
-      </h1>
-    </div>
+    <>
+      <Navbar />
+      <div className='success'>
+        <h1>Registration successful!</h1>
+        <h4>Please click on log in to access your account.</h4>
+      </div>
+    </>
   );
 };
 
